@@ -1,6 +1,7 @@
 import React, { useState, useEffect, use } from "react";
 import { ALL_PRODUCTS, SORT_PRODUCT_BY_TITLE } from "../constants";
 import ProductCard from "../shared/ProductCard";
+import CategoryList from "../shared/CategoryList";
 
 const DashboardFeatureBlock = () => {
   const [allProducts, setAllProducts] = useState([]);
@@ -8,6 +9,7 @@ const DashboardFeatureBlock = () => {
   const [searchText, setSearchText] = useState("");
   const [sortBy, setSortBy] = useState(0);
   const [orderBy, setOrderBy] = useState(0);
+  const [category, setCategory] = useState(0);
 
   const fetchAllProducts = async () => {
     const response = await fetch(ALL_PRODUCTS);
@@ -15,34 +17,52 @@ const DashboardFeatureBlock = () => {
     setAllProducts(data.products);
   };
 
-  const sortProducts = async () => {
-    if (sortBy != 0 && orderBy != 0) {
-      const response = await fetch(
-        `https://dummyjson.com/products?sortBy=${sortBy}&order=${orderBy}`
-      );
-      const data = await response.json();
-      setDispayProducts(data.products);
-    }
-  };
-
   useEffect(() => {
     fetchAllProducts();
   }, []);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchText) {
-        const filtered = allProducts.filter((product) =>
-          product.title?.toLowerCase().includes(searchText.toLowerCase())
-        );
-        setDispayProducts(filtered);
-      } else {
-        setDispayProducts(allProducts);
+    const fetchFilteredProducts = async () => {
+      try {
+        let url = ALL_PRODUCTS;
+
+        if (category !== 0 && category !== "0") {
+          url = `https://dummyjson.com/products/category/${category}`;
+        }
+
+        if (
+          sortBy !== 0 &&
+          sortBy !== "0" &&
+          orderBy !== 0 &&
+          orderBy !== "0"
+        ) {
+          const separator = url.includes("?") ? "&" : "?";
+          url = `${url}${separator}sortBy=${sortBy}&order=${orderBy}`;
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+        const products = data.products || data;
+
+        if (searchText) {
+          const filtered = products.filter((product) =>
+            product.title?.toLowerCase().includes(searchText.toLowerCase())
+          );
+          setDispayProducts(filtered);
+        } else {
+          setDispayProducts(products);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
       }
+    };
+
+    const timeoutId = setTimeout(() => {
+      fetchFilteredProducts();
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchText, allProducts]);
+  }, [searchText, sortBy, orderBy, category]);
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
@@ -51,10 +71,6 @@ const DashboardFeatureBlock = () => {
   const handleOrderChange = (e) => {
     setOrderBy(e.target.value);
   };
-
-  useEffect(() => {
-    sortProducts();
-  }, [sortBy, orderBy]);
 
   return (
     <div>
@@ -80,6 +96,7 @@ const DashboardFeatureBlock = () => {
             <option value="desc">Desc</option>
           </select>
         </div>
+        <CategoryList setFilterChange={setCategory} />
       </div>
       <ProductCard props={displayProducts} />
     </div>
