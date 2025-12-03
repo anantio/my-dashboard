@@ -1,4 +1,4 @@
-import "./App.css";
+import "./index.css";
 import DashboardFeatureBlock from "./Components/feature/DashboardFeatureBlock";
 
 function App() {
