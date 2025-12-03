@@ -1,11 +1,14 @@
 import "./index.css";
 import DashboardFeatureBlock from "./Components/feature/DashboardFeatureBlock";
+import ErrorBoundary from "./Components/shared/ErrorBoundary";
 
 function App() {
   return (
-    <div className="App">
-      <DashboardFeatureBlock />
-    </div>
+    <ErrorBoundary>
+      <div className="App">
+        <DashboardFeatureBlock />
+      </div>
+    </ErrorBoundary>
   );
 }
 

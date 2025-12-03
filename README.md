@@ -48,9 +48,10 @@ my-dashboard/
 │   │   │   └── DashboardFeatureBlock.js
 │   │   ├── shared/        # Reusable UI components
 │   │   │   ├── CategoryList.js
+│   │   │   ├── ErrorBoundary.js
 │   │   │   ├── Footer.js
 │   │   │   ├── Header.js
-│   │   │   └── ProductCard.js
+│   │   │   ├── ProductCard.js
 │   │   └── constants.js   # API endpoints and constants
 │   ├── __Tests__/         # Test files
 │   │   └── DashboardFeatureBlock.test.js
@@ -69,6 +70,7 @@ my-dashboard/
 - **Category Filtering**: Filter products by category
 - **Responsive Design**: Mobile-first approach using Tailwind CSS
 - **Performance Optimized**: Debounced API calls to reduce server load
+- **Error Boundary**: Graceful error handling with user-friendly fallback UI
 - **Unit Tested**: Comprehensive test coverage with Jest and React Testing Library
 
 ## 🛠️ Technical Choices & Trade-offs
@@ -341,7 +343,75 @@ jobs:
 | Monitoring | Sentry | Error tracking |
 | Docs | Storybook | Component library |
 
-## 🔒 Security Considerations
+## �️ Error Boundary Implementation
+
+This project includes a comprehensive Error Boundary implementation to gracefully handle runtime errors and prevent the entire application from crashing.
+
+### Features
+
+- **Graceful Error Handling**: Catches JavaScript errors anywhere in the component tree
+- **User-Friendly Fallback UI**: Displays a clean, informative error page instead of a blank screen
+- **Development Mode Details**: Shows detailed error information and component stack trace in development
+- **Error Recovery**: Provides "Try Again" and "Go to Home" options for users
+- **Error Logging**: Logs errors to console (can be extended to send to error tracking services like Sentry)
+
+### Components
+
+#### ErrorBoundary.js
+React class component that implements `componentDidCatch` lifecycle method to catch errors in child components.
+
+#### ErrorFallback.js
+Beautiful, responsive fallback UI component that displays when an error is caught. Includes:
+- Friendly error message
+- Error details (development mode only)
+- Recovery options
+- Responsive design with Tailwind CSS
+
+#### TestErrorComponent.js
+A test component for development that allows you to trigger errors manually to test the Error Boundary functionality.
+
+### Usage
+
+The Error Boundary is already integrated at the app level in `App.js`:
+
+```jsx
+import ErrorBoundary from "./Components/shared/ErrorBoundary";
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <div className="App">
+        <DashboardFeatureBlock />
+      </div>
+    </ErrorBoundary>
+  );
+}
+```
+
+You can also wrap specific components for more granular error handling:
+
+```jsx
+<ErrorBoundary>
+  <SpecificFeature />
+</ErrorBoundary>
+```
+
+### Testing the Error Boundary
+
+To test the Error Boundary in development:
+
+1. Import the `TestErrorComponent`:
+   ```jsx
+   import TestErrorComponent from "./Components/shared/TestErrorComponent";
+   ```
+
+2. Add it to your component:
+   ```jsx
+   <TestErrorComponent />
+   ```
+
+
+## �🔒 Security Considerations
 
 - **API Keys**: Use environment variables, never commit to Git
 - **Input Validation**: Sanitize user inputs
