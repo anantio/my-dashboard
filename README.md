@@ -360,15 +360,6 @@ This project includes a comprehensive Error Boundary implementation to gracefull
 #### ErrorBoundary.js
 React class component that implements `componentDidCatch` lifecycle method to catch errors in child components.
 
-#### ErrorFallback.js
-Beautiful, responsive fallback UI component that displays when an error is caught. Includes:
-- Friendly error message
-- Error details (development mode only)
-- Recovery options
-- Responsive design with Tailwind CSS
-
-#### TestErrorComponent.js
-A test component for development that allows you to trigger errors manually to test the Error Boundary functionality.
 
 ### Usage
 
@@ -395,20 +386,6 @@ You can also wrap specific components for more granular error handling:
   <SpecificFeature />
 </ErrorBoundary>
 ```
-
-### Testing the Error Boundary
-
-To test the Error Boundary in development:
-
-1. Import the `TestErrorComponent`:
-   ```jsx
-   import TestErrorComponent from "./Components/shared/TestErrorComponent";
-   ```
-
-2. Add it to your component:
-   ```jsx
-   <TestErrorComponent />
-   ```
 
 
 ## �🔒 Security Considerations
